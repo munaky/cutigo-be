@@ -6,6 +6,7 @@ import {
   handleDelete as handleDeleteUser,
   handleGet as handleGetUser,
   handleUpdate as handleUpdateUser,
+  handleUpdatePassword
 } from "./controllers/user-controller";
 import { handleLogin } from "./controllers/auth-controller";
 import { errorHandler } from "./middlewares/error-handler";
@@ -21,6 +22,7 @@ import {
   handleGet as handleGetLeaveRequestAdmin,
   handleUpdate as handleUpdateLeaveRequest,
 } from "./controllers/leave-request/admin";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -28,6 +30,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(corsMiddleware);
 
 //AUTH
@@ -47,6 +50,11 @@ app.patch(
   authMiddleware,
   validateAdmin,
   handleUpdateUser
+);
+app.patch(
+  "/api/v1/users/update-password",
+  authMiddleware,
+  handleUpdatePassword
 );
 app.delete(
   "/api/v1/users/delete/:userId",

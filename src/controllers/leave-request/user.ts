@@ -12,7 +12,8 @@ export const handleGet: RequestHandler = async (req, res, next) => {
       .from("LeaveRequest")
       .select()
       .eq("userId", userId)
-      .order('id', {ascending: false});
+      .order('id', {ascending: false})
+      .limit(50);
     if (leaveRequests.error) throw {};
 
     resSuccess(res, 200, "Fetch data success!", leaveRequests.data);
@@ -24,7 +25,7 @@ export const handleGet: RequestHandler = async (req, res, next) => {
 export const handleCreate: RequestHandler = async (req, res, next) => {
     try {
       const userId = (req as any).user.id;
-      const {startDate, endDate, reason} = createValidator(req.body);
+      const {startDate, endDate, reason} = await createValidator({...req.body, userId});
   
       const leaveRequests = await supabase
         .from("LeaveRequest")
@@ -36,7 +37,7 @@ export const handleCreate: RequestHandler = async (req, res, next) => {
   
       resSuccess(res, 200, "Leave request created!", leaveRequests.data);
     } catch (error: any) {
-      next({ message: "Failed to create leave request!", detail: error?.message || error });
+      next({ message: error?.message || "Failed to create leave request!", detail: error?.message || error });
     }
   };
 

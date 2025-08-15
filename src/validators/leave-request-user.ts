@@ -1,6 +1,8 @@
 import Joi from "joi";
+import { supabase } from "../utils/supabase";
 
 const createSchema = Joi.object({
+    userId: Joi.number().integer().min(1).required(),
     startDate: Joi.date()
       .iso()
       .min(new Date().toISOString().split("T")[0] as string) // ensures not earlier than today
@@ -21,9 +23,20 @@ const createSchema = Joi.object({
   
     reason: Joi.string().required(),
   });
-export const createValidator = (data: any) => {
+export const createValidator = async (data: any) => {
     const {error, value} = createSchema.validate(data);
     if (error) throw error;
+
+    const pendingRequest = await supabase
+    .from('LeaveRequest')
+    .select('*')
+    .eq('userId', value.userId)
+    .eq('status', 'PENDING');
+
+    if(pendingRequest.data?.length || 0 > 0) throw {
+      code: 403,
+       message: 'You already have a pending leave request. Please wait until it is processed before submitting another.'
+      }
 
     return value;
 }
