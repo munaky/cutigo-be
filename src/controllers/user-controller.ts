@@ -10,26 +10,43 @@ export const handleGet: RequestHandler = async (req, res, next) => {
     const offset = Number(req.query.offset) || 0;
     const search = req.query.search || '';
     const lastId = Number(req.query.lastId) || null;
-    let leaveRequests: any = [];
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 1).toISOString();  // Jan 1st
+    const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999).toISOString(); // Dec 31st
 
-    const db = supabase
+    let query = supabase
       .from("User")
-      .select('id, name, email')
-      .neq('role', 'ADMIN')
+      .select(`
+    id,
+    name,
+    email,
+    LeaveRequest (
+      id,
+      createdAt
+    )
+  `)
+      .neq("role", "ADMIN")
       .or(`name.ilike.%${search}%,email.ilike.%${search}%`)
-      .order('id', {ascending: false})
+      .order("id", { ascending: false })
       .limit(limit)
       .range(offset, offset + limit - 1);
 
-    if(lastId && lastId > 0){
-      leaveRequests = await db.lt('id', lastId)
+    if (lastId && lastId > 0) {
+      query = query.lt("id", lastId);
     }
-    else{
-      leaveRequests = await db
-    }
-    if (leaveRequests.error) throw {};
 
-    resSuccess(res, 200, "Fetch data success!", leaveRequests.data);
+    query = query.gte("LeaveRequest.createdAt", startOfYear).lte("LeaveRequest.createdAt", endOfYear);
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    const users = data.map((u) => ({
+      ...u,
+      leaveRequestCount: u.LeaveRequest?.length ?? 0,
+    }));
+
+    resSuccess(res, 200, "Fetch data success!", users);
   } catch (error: any) {
     next({ message: "Fetch data failed!", detail: error?.message || error });
   }
@@ -51,9 +68,9 @@ export const handleCreate: RequestHandler = async (req, res, next) => {
       .select('id, name, email, role')
       .single();
 
-      if(user.error) throw{}
+    if (user.error) throw {}
 
-      resSuccess(res, 200, 'New user created!', user.data);
+    resSuccess(res, 200, 'New user created!', user.data);
   } catch (error: any) {
     next({ message: "Unable to add user!", detail: error?.message || error });
   }
@@ -69,15 +86,15 @@ export const handleUpdate: RequestHandler = async (req, res, next) => {
       .update({
         name,
         email,
-        ...(password ? {password: await bcrypt.hash(password, 10)} : {})
+        ...(password ? { password: await bcrypt.hash(password, 10) } : {})
       })
       .eq('id', userId)
       .select('id, name, email, role')
       .single();
 
-      if(user.error) throw{}
+    if (user.error) throw {}
 
-      resSuccess(res, 200, 'User updated!', user.data);
+    resSuccess(res, 200, 'User updated!', user.data);
   } catch (error: any) {
     next({ message: "Unable to update user!", detail: error?.message || error });
   }
@@ -91,15 +108,15 @@ export const handleUpdatePassword: RequestHandler = async (req, res, next) => {
     const user = await supabase
       .from("User")
       .update({
-        ...(password ? {password: await bcrypt.hash(password, 10)} : {})
+        ...(password ? { password: await bcrypt.hash(password, 10) } : {})
       })
       .eq('id', userId)
       .select('id, name, email, role')
       .single();
 
-      if(user.error) throw{}
+    if (user.error) throw {}
 
-      resSuccess(res, 200, 'User updated!', user.data);
+    resSuccess(res, 200, 'User updated!', user.data);
   } catch (error: any) {
     next({ message: "Unable to update user!", detail: error?.message || error });
   }
@@ -115,7 +132,7 @@ export const handleDelete: RequestHandler = async (req, res, next) => {
       .eq('id', userId)
       .select('id, name, email, role')
       .single();
-    if (user.error) throw {message: user.error};
+    if (user.error) throw { message: user.error };
 
     resSuccess(res, 200, "Delete data success!", user.data);
   } catch (error: any) {

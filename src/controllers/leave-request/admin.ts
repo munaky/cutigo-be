@@ -4,6 +4,7 @@ import { resSuccess } from "../../utils/response-format";
 import { updateValidator } from "../../validators/leave-request-admin";
 import { Resend } from "resend";
 import { env } from "../../config/env";
+import { sendEmail } from "../../utils/email-sender";
 
 export const handleGet: RequestHandler = async (req, res, next) => {
   try {
@@ -32,18 +33,12 @@ export const handleUpdate: RequestHandler = async (req, res, next) => {
         status,
       })
       .eq("id", leaveRequestId)
-      .select()
+      .select('*, User (*)')
       .single();
     if (leaveRequest.error) throw {};
 
-    const resend = new Resend(env.RESEND_API_KEY)
-    resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: leaveRequest.data.email,
-      subject: `Your Leave Request is ${status}`,
-      html: `<p>Hello ${leaveRequest.data.name}, your leave request is ${status}</p>`
-    });
-
+    sendEmail(leaveRequest.data)
+    
     resSuccess(res, 200, "Leave request updated!", leaveRequest.data);
   } catch (error: any) {
     next({
