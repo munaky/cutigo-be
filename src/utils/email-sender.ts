@@ -54,7 +54,6 @@ export const sendEmail = async (leaveRequest: any) => {
       pass: process.env.NODEMAILER_PASSWORD,
     },
   });
-  console.log(leaveRequest)
 
   await transporter.sendMail({
     from: `CutiGo <${process.env.ADMIN_EMAIL}>`,

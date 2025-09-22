@@ -65,10 +65,20 @@ export const handleCreate: RequestHandler = async (req, res, next) => {
         email,
         password: hashed,
       })
-      .select('id, name, email, role')
+      .select(`
+    id,
+    name,
+    email,
+    LeaveRequest (
+      id,
+      createdAt
+    )
+  `)
       .single();
 
-    if (user.error) throw {}
+    if (user.error) throw {};
+
+    (user as any).leaveRequestCount = (user as any).LeaveRequest.length ?? 0
 
     resSuccess(res, 200, 'New user created!', user.data);
   } catch (error: any) {
