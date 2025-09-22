@@ -1,43 +1,47 @@
-# 🌟 CutiGo: Aplikasi Manajemen Pengajuan Cuti Karyawan (Express.js Backend)
+# 🌟 CutiGo: Employee Leave Management Application (Express.js Backend)
 
-**CutiGo** adalah aplikasi berbasis web yang membantu perusahaan dalam **mengelola pengajuan cuti karyawan** secara lebih cepat, praktis, dan transparan.  
-Dengan CutiGo, tidak ada lagi formulir manual atau repot-repot menghubungi HR secara langsung — semua bisa dilakukan **secara online**. 🚀
-
----
-
-## ✨ Fitur Utama
-- 📌 **Pengajuan Online** – Karyawan dapat mengajukan cuti kapan saja dan di mana saja.  
-- 📖 **Riwayat Cuti** – Simpan dan kelola riwayat pengajuan cuti.  
-- 🔔 **Notifikasi Status** – API menyediakan status real-time untuk aplikasi frontend.  
-- ⚡ **Manajemen Efisien** – HR dapat meninjau, menyetujui, atau menolak pengajuan cuti.  
+**CutiGo** is a web-based application that helps companies **manage employee leave requests** quickly, efficiently, and transparently.
+With CutiGo, there’s no need for manual forms or contacting HR directly — everything can be done **online**. 🚀
 
 ---
 
-## 👥 Peran dalam Aplikasi
+## ✨ Key Features
 
-### 👨‍💼 Karyawan
-- Mengajukan cuti melalui endpoint API.  
-- Mengubah atau membatalkan pengajuan sebelum diproses.  
-- Melihat status pengajuan cuti.  
+* 📌 **Online Leave Requests** – Employees can request leave anytime, anywhere.
+* 📖 **Leave History** – Store and manage leave request records.
+* 🔔 **Status Notifications** – API provides real-time status updates for the frontend application.
+* ⚡ **Efficient Management** – HR can review, approve, or reject leave requests.
+
+---
+
+## 👥 User Roles in the Application
+
+### 👨‍💼 Employee
+
+* Submit leave requests through the API endpoints.
+* Modify or cancel requests before processing.
+* View the status of submitted leave requests.
 
 ### 🧑‍💻 Admin / HR
-- Meninjau semua pengajuan cuti yang masuk.  
-- Memberikan persetujuan atau penolakan.  
-- Memastikan jadwal cuti tetap selaras dengan operasional perusahaan.  
+
+* Review all incoming leave requests.
+* Approve or reject requests.
+* Ensure leave schedules align with company operations.
 
 ---
 
-## ⚙️ Instalasi & Menjalankan (Express.js)
+## ⚙️ Installation & Running (Express.js)
 
-Pastikan sudah terpasang **Node.js (>=18)** di komputer.
+Make sure **Node.js (>=18)** is installed on your system.
 
 ```bash
-# 1. Clone repo
+# 1. Clone the repository
 git clone https://github.com/munaky/cutigo-be.git
 cd cutigo-be
 
 # 2. Install dependencies
-npm install 
+npm install
 
-# 3. Jalankan server
+# 3. Start the server
 npm run start
+```
